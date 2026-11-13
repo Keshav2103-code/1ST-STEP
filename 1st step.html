@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>1st step | AI-Powered ATS Resume Builder & Career Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Merriweather:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-black: #05070B;
+      --bg-navy-card: #0F172A;
+      --navy-primary: #1E3A8A;
+      --navy-vibrant: #2563EB;
+      --navy-light: #60A5FA;
+      --pure-white: #FFFFFF;
+      --navy-glow: rgba(37, 99, 235, 0.25);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-black);
+      color: var(--pure-white);
+      overflow-x: hidden;
+    }
+
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #05070B; }
+    ::-webkit-scrollbar-thumb { background: #1E3A8A; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #2563EB; }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.65s ease-out, transform 0.65s ease-out;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media print {
+      body * { visibility: hidden; }
+      #resume-sheet, #resume-sheet * { visibility: visible; }
+      #resume-sheet {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: #FFFFFF !important;
+        box-shadow: none !important;
+        padding: 28px !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+    }
+  </style>
+</head>
+<body class="selection:bg-[#2563EB] selection:text-white">
+
+  <!-- STICKY GLASSMORPHIC NAVBAR (BLACK + NAVY + WHITE) -->
+  <header class="sticky top-0 z-40 backdrop-blur-md bg-[#05070B]/90 border-b border-white/15">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
+      <button onclick="switchView('LANDING')" class="flex items-center gap-2.5 group cursor-pointer shrink-0">
+        <svg width="36" height="36" viewBox="0 0 40 40" fill="none" class="transition-transform duration-300 group-hover:scale-105">
+          <rect x="2" y="2" width="36" height="36" rx="10" fill="#0F172A" stroke="#FFFFFF" stroke-width="2" />
+          <path d="M11 28H17V22H23V16H29" stroke="#3B82F6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+          <circle cx="29" cy="11.5" r="2.5" fill="#FFFFFF" />
+        </svg>
+        <span class="text-xl font-extrabold tracking-tight">
+          <span class="text-[#3B82F6]">1st</span> <span class="text-white">step</span>
+        </span>
+      </button>
+
+      <nav class="hidden md:flex items-center gap-7 text-sm text-slate-300">
+        <button onclick="switchView('LANDING')" class="hover:text-white transition cursor-pointer">Home</button>
+        <a href="#features" onclick="switchView('LANDING')" class="hover:text-white transition">Features</a>
+        <a href="#pricing" onclick="switchView('LANDING')" class="hover:text-white transition">Plans</a>
+        <a href="#about-us" onclick="switchView('LANDING')" class="hover:text-white transition">About Us & Team</a>
+        <button id="nav-workspace-btn" onclick="switchView('PORTAL')" class="hidden text-[#60A5FA] font-semibold cursor-pointer">
+          Workspace
+        </button>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <span id="nav-user-badge" class="hidden lg:inline-block text-xs px-3 py-1 rounded-full bg-[#0F172A] border border-white/20 text-white"></span>
+        <button id="nav-auth-btn" onclick="handleHeaderAuthClick()" class="px-5 py-2 rounded-xl bg-white hover:bg-slate-200 text-[#05070B] font-bold text-xs transition shadow-lg cursor-pointer">
+          Login / Portal
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================= -->
+  <!-- VIEW 1: LANDING PAGE & ADMIN-LOCKED ABOUT US SECTION      -->
+  <!-- ========================================================= -->
+  <main id="view-landing">
+    <!-- HERO SECTION -->
+    <section class="relative overflow-hidden py-24 px-6 bg-gradient-to-b from-[#05070B] via-[#0B1120] to-[#05070B]">
+      <div class="absolute -top-36 left-1/2 -translate-x-1/2 w-[640px] h-[640px] rounded-full blur-[135px] pointer-events-none" style="background: var(--navy-glow);"></div>
+      <div class="max-w-4xl mx-auto text-center space-y-6 relative z-10 reveal visible">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0F172A] border border-white/20 text-xs text-white font-medium">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#60A5FA]"></i> AI-Powered ATS Resume Architect
+        </div>
+        <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight leading-tight text-white">
+          Beat the ATS Bots. Take Your <span class="text-[#3B82F6]">1st step</span> to Success.
+        </h1>
+        <p class="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+          Upload your existing resume, benchmark your ATS compatibility score in real time, rewrite bullet points with natural-language AI, and export across 30+ recruiter-verified templates.
+        </p>
+        <div class="flex flex-wrap justify-center gap-4 pt-4">
+          <button onclick="switchView(currentUser ? 'PORTAL' : 'AUTH')" class="px-7 py-3.5 rounded-2xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-sm inline-flex items-center gap-2 shadow-lg shadow-blue-900/40 transition cursor-pointer">
+            Build My ATS Resume <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+          <a href="#about-us" class="px-7 py-3.5 rounded-2xl bg-white hover:bg-slate-200 text-[#05070B] font-bold text-sm transition">
+            Meet the Creators
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- CORE FEATURES GRID -->
+    <section id="features" class="py-20 px-6 border-t border-white/15 bg-[#05070B]">
+      <div class="max-w-7xl mx-auto space-y-12">
+        <div class="text-center max-w-2xl mx-auto reveal">
+          <h2 class="text-3xl font-bold text-white">Engineered for Modern Recruitment</h2>
+          <p class="text-sm text-slate-400 mt-2">Everything you need to pass enterprise Applicant Tracking Systems and stand out to hiring managers.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="p-6 rounded-2xl bg-[#0F172A] border border-white/15 hover:border-[#3B82F6] transition reveal">
+            <div class="w-11 h-11 rounded-xl bg-white text-[#0F172A] flex items-center justify-center mb-4">
+              <i data-lucide="file-scan" class="w-6 h-6"></i>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2">Smart Resume Parsing</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">Upload PDF or DOCX files to automatically extract experience, education, and technical skills into structured, editable sections.</p>
+          </div>
+          <div class="p-6 rounded-2xl bg-[#0F172A] border border-white/15 hover:border-[#3B82F6] transition reveal">
+            <div class="w-11 h-11 rounded-xl bg-white text-[#0F172A] flex items-center justify-center mb-4">
+              <i data-lucide="gauge" class="w-6 h-6"></i>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2">Real-Time ATS Scanner</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">Compare your resume against any target Job Description to calculate your ATS match score, pinpoint missing keywords, and get course upskilling paths.</p>
+          </div>
+          <div class="p-6 rounded-2xl bg-[#0F172A] border border-white/15 hover:border-[#3B82F6] transition reveal">
+            <div class="w-11 h-11 rounded-xl bg-white text-[#0F172A] flex items-center justify-center mb-4">
+              <i data-lucide="wand-2" class="w-6 h-6"></i>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2">Dual Editing & 30+ Templates</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">Switch seamlessly between granular manual form editing and natural-language AI auto-rewrites, with clean PDF and DOCX exports.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SUBSCRIPTION TIERS -->
+    <section id="pricing" class="py-20 px-6 border-t border-white/15 bg-[#080C14]">
+      <div class="max-w-6xl mx-auto space-y-12">
+        <div class="text-center max-w-2xl mx-auto reveal">
+          <h2 class="text-3xl font-bold text-white">Transparent Career Plans</h2>
+          <p class="text-sm text-slate-400 mt-2">Choose a plan tailored to your job search—features unlock strictly according to your active tier.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 reveal">
+          <div class="p-7 rounded-3xl bg-[#0F172A] border border-white/15 flex flex-col justify-between">
+            <div>
+              <h3 class="text-lg font-bold text-white">Basic Starter</h3>
+              <div class="text-3xl font-extrabold text-white my-4">₹199 <span class="text-xs font-normal text-slate-400">/ month</span></div>
+              <ul class="space-y-2.5 text-xs text-slate-200 mb-8">
+                <li class="flex items-center gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-[#60A5FA]"></i> 10 Standard ATS Templates (#1–#10)</li>
+                <li class="flex items-center gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-[#60A5FA]"></i> 5 ATS Compatibility Scans / mo</li>
+                <li class="flex items-center gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-[#60A5FA]"></i> Clean PDF & DOCX Exports</li>
+                <li class="flex items-center gap-2 text-slate-400"><i data-lucide="lock" class="w-4 h-4"></i> AI Auto-Rewrite Locked</li>
+              </ul>
+            </div>
+            <button onclick="switchView('AUTH')" class="w-full py-3 rounded-xl bg-white hover:bg-slate-200 text-[#05070B] font-bold text-xs transition cursor-pointer">Select Basic</button>
+          </div>
+
+          <div class="p-7 rounded-3xl bg-[#1E3A8A] border-2 border-white shadow-2xl flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between">
+                <h3 class="text-lg font-bold text-white">Professional</h3>
+                <span class="px-2.5 py-0.5 rounded-full bg-white text-[#0F172A] text-[10px] font-extrabold">POPULAR</span>
+              </div>
+              <div class="text-3xl font-extrabold text-white my-4">₹399 <span class="text-xs font-normal text-blue-200">/ month</span></div>
+              <ul class="space-y-2.5 text-xs text-white mb-8">
+                <li class="flex items-center gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-white"></i> 20 ATS Templates (#1–#20)</li>
+                <li class="flex items-center gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-white"></i> 25 ATS Scans + Course Upskilling</li>
+                <li class="flex items-center gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-white"></i> 15 AI Section Auto-Updates / mo</li>
+                <li class="flex items-center gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-white"></i> Clean PDF & DOCX Exports</li>
+              </ul>
+            </div>
+            <button onclick="switchView('AUTH')" class="w-full py-3 rounded-xl bg-[#05070B] hover:bg-black text-white font-bold text-xs border border-white/20 transition cursor-pointer">Choose Professional</button>
+          </div>
+
+          <div class="p-7 rounded-3xl bg-[#0F172A] border border-white/15 flex flex-col justify-between">
+            <div>
+              <h3 class="text-lg font-bold text-white">Enterprise Unlimited</h3>
+              <div class="text-3xl font-extrabold text-white my-4">₹599 <span class="text-xs font-normal text-slate-400">/ month</span></div>
+              <ul class="space-y-2.5 text-xs text-slate-200 mb-8">
+                <li class="flex items-center gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-[#60A5FA]"></i> All 30+ Executive & Tech Templates</li>
+                <li class="flex items-center gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-[#60A5FA]"></i> Unlimited ATS Scans & Upskilling</li>
+                <li class="flex items-center gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-[#60A5FA]"></i> Unlimited AI Auto-Updates</li>
+                <li class="flex items-center gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-[#60A5FA]"></i> Priority AI & Employee Support</li>
+              </ul>
+            </div>
+            <button onclick="switchView('AUTH')" class="w-full py-3 rounded-xl bg-white hover:bg-slate-200 text-[#05070B] font-bold text-xs transition cursor-pointer">Go Unlimited</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DEDICATED ABOUT US SECTION (LOCKED FOR NON-ADMINS, EDITABLE & SAVABLE ONLY BY ADMIN) -->
+    <section id="about-us" class="py-24 px-6 bg-[#05070B] border-t border-white/15">
+      <div class="max-w-7xl mx-auto space-y-16">
+        <!-- Admin-Only Control Bar (Hidden unless logged in as ADMIN) -->
+        <div id="about-admin-bar" class="hidden max-w-4xl mx-auto p-4 rounded-2xl bg-[#1E3A8A] border-2 border-white flex flex-wrap items-center justify-between gap-4 shadow-xl">
+          <div class="flex items-center gap-2.5">
+            <i data-lucide="shield-check" class="w-5 h-5 text-white"></i>
+            <div>
+              <p class="text-xs font-extrabold text-white uppercase tracking-wider">Admin Root Mode Active</p>
+              <p class="text-[11px] text-blue-100">Only you can upload photos or edit About Us details. Click Save to lock changes permanently.</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="btn-toggle-about-edit" onclick="toggleAboutEditMode()" class="px-4 py-2 rounded-xl bg-[#05070B] text-white font-bold text-xs border border-white/25 cursor-pointer">
+              Enable Editing
+            </button>
+            <button id="btn-save-about" onclick="saveAboutChangesPermanently()" class="hidden px-4 py-2 rounded-xl bg-white text-[#05070B] hover:bg-slate-200 font-extrabold text-xs cursor-pointer">
+              Save Changes Permanently
+            </button>
+          </div>
+        </div>
+
+        <div id="about-save-toast" class="hidden max-w-2xl mx-auto p-3.5 rounded-xl bg-[#0F172A] border border-[#60A5FA] text-center text-xs text-white font-semibold">
+          About Us changes have been saved permanently and locked. Only Admin can modify them.
+        </div>
+
+        <!-- Application Description -->
+        <div class="text-center max-w-4xl mx-auto space-y-5 reveal">
+          <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0F172A] border border-white/20 text-[#60A5FA] text-xs font-semibold">
+            <i data-lucide="shield" class="w-3.5 h-3.5"></i> About 1st step • Official Record
+          </span>
+          <h2 class="text-3xl sm:text-5xl font-bold text-white tracking-tight">
+            Revolutionizing Career Preparation Through <span class="text-[#3B82F6]">AI-Driven ATS Precision</span>
+          </h2>
+          <p id="about-mission-text" class="text-slate-300 text-base leading-relaxed"></p>
+          <textarea id="about-mission-input" rows="4" class="hidden w-full p-4 rounded-2xl bg-[#0F172A] border border-white text-sm text-white outline-none"></textarea>
+        </div>
+
+        <!-- Project Guide / Mentor Spotlight Card -->
+        <div class="max-w-3xl mx-auto reveal">
+          <div class="text-center mb-5">
+            <span class="text-xs uppercase tracking-widest text-[#60A5FA] font-bold">Project Guide & Academic Mentorship</span>
+          </div>
+          <div id="mentor-card-container"></div>
+        </div>
+
+        <!-- Team Grid (4 Creators) -->
+        <div class="space-y-8 reveal">
+          <div class="text-center">
+            <h3 class="text-2xl font-bold text-white">Creators & Engineering Team</h3>
+            <p id="about-lock-caption" class="text-xs text-slate-400 mt-1 flex items-center justify-center gap-1.5">
+              <i data-lucide="lock" class="w-3.5 h-3.5 text-[#60A5FA]"></i> Verified & Locked — Editable exclusively by System Admin
+            </p>
+          </div>
+          <div id="team-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========================================================= -->
+  <!-- VIEW 2: UNIVERSAL LOGIN / SIGNUP / EMPLOYEE OTP PORTAL    -->
+  <!-- ========================================================= -->
+  <section id="view-auth" class="hidden min-h-[85vh] flex items-center justify-center px-4 py-12">
+    <div class="w-full max-w-md p-8 rounded-3xl bg-[#0F172A] border border-white/15 shadow-2xl space-y-6">
+      <div class="text-center space-y-1.5">
+        <h2 id="auth-heading" class="text-2xl font-bold text-white">Portal Sign In</h2>
+        <p class="text-xs text-slate-300">Role-Based Access Control for Job Seekers, Employees & Owner</p>
+      </div>
+
+      <!-- 3-Tier Role Selector -->
+      <div class="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-[#05070B] border border-white/15">
+        <button type="button" onclick="selectAuthRole('USER')" id="role-btn-USER" class="py-2 text-xs font-bold rounded-lg bg-[#2563EB] text-white transition cursor-pointer">Job Seeker</button>
+        <button type="button" onclick="selectAuthRole('EMPLOYEE')" id="role-btn-EMPLOYEE" class="py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition cursor-pointer">Employee</button>
+        <button type="button" onclick="selectAuthRole('ADMIN')" id="role-btn-ADMIN" class="py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition cursor-pointer">Admin / Owner</button>
+      </div>
+
+      <div id="admin-login-hint" class="hidden p-3 rounded-xl bg-[#05070B] border border-white/20 text-[11px] text-slate-300">
+        <strong class="text-white">Owner Credentials:</strong> <code class="text-[#60A5FA]">admin@1ststep.in</code> / Password: <code class="text-[#60A5FA]">admin123</code>
+      </div>
+
+      <div id="auth-alert" class="hidden p-3 rounded-xl bg-[#05070B] border border-[#3B82F6] text-xs text-white"></div>
+
+      <form onsubmit="handleAuthSubmit(event)" class="space-y-4">
+        <div id="field-fullname" class="hidden">
+          <input type="text" id="input-fullname" placeholder="Full Name" class="w-full px-4 py-2.5 rounded-xl bg-[#05070B] border border-white/15 text-sm text-white focus:border-[#3B82F6] outline-none" />
+        </div>
+        <div>
+          <input type="email" id="input-email" required placeholder="Email Address" class="w-full px-4 py-2.5 rounded-xl bg-[#05070B] border border-white/15 text-sm text-white focus:border-[#3B82F6] outline-none" />
+        </div>
+        <div id="field-emp-code" class="hidden">
+          <input type="text" id="input-emp-code" placeholder="Company Employee ID (e.g., EMP-101)" class="w-full px-4 py-2.5 rounded-xl bg-[#05070B] border border-white/15 text-sm text-white focus:border-[#3B82F6] outline-none" />
+        </div>
+        <div id="field-otp" class="hidden">
+          <input type="text" id="input-otp" maxlength="6" placeholder="Enter 6-digit OTP" class="w-full px-4 py-2.5 rounded-xl bg-[#05070B] border border-[#3B82F6] text-sm text-white tracking-widest outline-none" />
+        </div>
+        <div id="field-password">
+          <input type="password" id="input-password" required placeholder="Password" class="w-full px-4 py-2.5 rounded-xl bg-[#05070B] border border-white/15 text-sm text-white focus:border-[#3B82F6] outline-none" />
+        </div>
+        <button type="submit" id="auth-submit-btn" class="w-full py-3 rounded-xl bg-white hover:bg-slate-200 text-[#05070B] font-bold text-sm transition shadow-lg cursor-pointer">
+          Enter Job Seeker Dashboard
+        </button>
+      </form>
+
+      <div class="flex items-center justify-between text-xs text-slate-300 pt-3 border-t border-white/15">
+        <button type="button" id="toggle-signup-btn" onclick="toggleAuthMode()" class="hover:text-white transition cursor-pointer">
+          New here? Create Account
+        </button>
+        <button type="button" id="forgot-otp-btn" onclick="triggerEmployeeOtp()" class="hidden text-[#60A5FA] hover:underline cursor-pointer">
+          Forgot Password (OTP)?
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================= -->
+  <!-- VIEW 3: ROLE WORKSPACES (USER / EMPLOYEE / ADMIN)         -->
+  <!-- ========================================================= -->
+  <section id="view-portal" class="hidden max-w-7xl mx-auto px-4 py-8">
+    <!-- USER / JOB SEEKER DASHBOARD (STRICT TIER GATING) -->
+    <div id="portal-USER" class="hidden space-y-6">
+      <div class="flex flex-wrap items-center justify-between gap-4 p-5 rounded-2xl bg-[#0F172A] border border-white/15">
+        <div>
+          <h2 id="user-welcome-title" class="text-xl font-bold text-white">Welcome, Candidate</h2>
+          <p id="user-quota-bar" class="text-xs text-slate-300 mt-0.5"></p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <button onclick="switchUserTab('BUILDER')" id="utab-BUILDER" class="px-4 py-2 rounded-xl text-xs font-bold bg-white text-[#05070B] cursor-pointer">Dual Editor</button>
+          <button onclick="switchUserTab('ATS')" id="utab-ATS" class="px-4 py-2 rounded-xl text-xs font-bold bg-[#05070B] text-white border border-white/15 cursor-pointer">ATS Scanner & Upskill</button>
+          <button onclick="switchUserTab('TEMPLATES')" id="utab-TEMPLATES" class="px-4 py-2 rounded-xl text-xs font-bold bg-[#05070B] text-white border border-white/15 cursor-pointer">30+ Templates</button>
+          <button onclick="switchUserTab('PLANS')" id="utab-PLANS" class="px-4 py-2 rounded-xl text-xs font-bold bg-[#2563EB] text-white cursor-pointer">Upgrade Plan</button>
+        </div>
+      </div>
+
+      <!-- TAB A: DUAL RESUME EDITOR + LIVE PREVIEW -->
+      <div id="user-tab-BUILDER" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-5 p-6 rounded-2xl bg-[#0F172A] border border-white/15 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="flex gap-1.5">
+              <button onclick="setEditorMode('MANUAL')" id="emode-MANUAL" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#2563EB] text-white cursor-pointer">Manual Editor</button>
+              <button onclick="setEditorMode('AI')" id="emode-AI" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#05070B] text-slate-300 cursor-pointer">AI Auto-Update</button>
+            </div>
+            <label class="px-3 py-1.5 rounded-lg bg-white text-[#05070B] font-semibold text-xs cursor-pointer inline-flex items-center gap-1.5 hover:bg-slate-200">
+              <i data-lucide="upload" class="w-3.5 h-3.5"></i> Parse Resume
+              <input type="file" accept=".txt,.pdf,.doc,.docx" onchange="parseUploadedResume(this)" class="hidden" />
+            </label>
+          </div>
+
+          <!-- Resume Accent Color Swatches -->
+          <div class="p-3 rounded-xl bg-[#05070B] border border-white/15 flex items-center justify-between gap-2">
+            <span class="text-xs font-semibold text-slate-300">Resume Accent:</span>
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="applyResumeColor('#1E3A8A', '#EFF6FF')" class="w-5 h-5 rounded-full bg-[#1E3A8A] border border-white cursor-pointer" title="Classic Navy Blue"></button>
+              <button type="button" onclick="applyResumeColor('#05070B', '#F1F5F9')" class="w-5 h-5 rounded-full bg-[#05070B] border border-white cursor-pointer" title="Executive Jet Black"></button>
+              <button type="button" onclick="applyResumeColor('#2563EB', '#DBEAFE')" class="w-5 h-5 rounded-full bg-[#2563EB] border border-white cursor-pointer" title="Royal Navy"></button>
+              <button type="button" onclick="applyResumeColor('#0F172A', '#E2E8F0')" class="w-5 h-5 rounded-full bg-[#0F172A] border border-white cursor-pointer" title="Midnight Slate"></button>
+            </div>
+          </div>
+
+          <!-- Manual Form Inputs -->
+          <div id="editor-manual-box" class="space-y-3">
+            <input id="res-name" oninput="syncResumePreview()" value="Keshav Mishra" placeholder="Full Name" class="w-full px-3.5 py-2 rounded-xl bg-[#05070B] border border-white/15 text-sm text-white" />
+            <input id="res-role" oninput="syncResumePreview()" value="Full-Stack Software Engineer" placeholder="Target Role" class="w-full px-3.5 py-2 rounded-xl bg-[#05070B] border border-white/15 text-sm text-white" />
+            <input id="res-contact" oninput="syncResumePreview()" value="keshav@1ststep.in • +91 98765 43210 • Kanpur, India" placeholder="Contact Details" class="w-full px-3.5 py-2 rounded-xl bg-[#05070B] border border-white/15 text-xs text-white" />
+            <textarea id="res-summary" oninput="syncResumePreview()" rows="3" class="w-full px-3.5 py-2 rounded-xl bg-[#05070B] border border-white/15 text-xs text-white">Results-driven software developer specializing in ATS-optimized web architectures, React/Next.js ecosystems, and scalable RESTful APIs.</textarea>
+            <textarea id="res-exp" oninput="syncResumePreview()" rows="4" class="w-full px-3.5 py-2 rounded-xl bg-[#05070B] border border-white/15 text-xs text-white">Full-Stack Developer | 1st step Platform (2025 – Present)
+• Architected an AI-powered ATS resume scoring engine improving candidate shortlist rates by 42%.
+• Built automated PDF/DOCX parsing pipelines with role-based access control.</textarea>
+            <input id="res-skills" oninput="syncResumePreview()" value="React.js, Next.js, TypeScript, Node.js, PostgreSQL, Tailwind CSS, Python, REST APIs" class="w-full px-3.5 py-2 rounded-xl bg-[#05070B] border border-white/15 text-xs text-white" />
+            <input id="res-edu" oninput="syncResumePreview()" value="Master of Computer Applications (MCA) / B.Tech Computer Science — 2026" class="w-full px-3.5 py-2 rounded-xl bg-[#05070B] border border-white/15 text-xs text-white" />
+          </div>
+
+          <!-- AI Prompt Auto-Update Box (Plan Gated) -->
+          <div id="editor-ai-box" class="hidden space-y-4 py-2">
+            <div id="ai-locked-notice" class="hidden p-4 rounded-xl bg-[#05070B] border border-white/25 space-y-2">
+              <p class="text-xs font-bold text-white flex items-center gap-1.5"><i data-lucide="lock" class="w-4 h-4 text-[#60A5FA]"></i> Plan Limit Reached / Upgrade Required</p>
+              <p class="text-[11px] text-slate-300">AI Auto-Update requires the <strong>Professional (₹399/mo)</strong> or <strong>Enterprise (₹599/mo)</strong> plan.</p>
+              <button onclick="switchUserTab('PLANS')" class="px-4 py-2 rounded-lg bg-white text-[#05070B] font-bold text-xs cursor-pointer">View Plans</button>
+            </div>
+            <div id="ai-unlocked-controls" class="space-y-3">
+              <p class="text-xs text-slate-300">Describe the role or achievement you want to highlight. Our AI engine will rewrite and inject quantified ATS metrics automatically.</p>
+              <textarea id="ai-rewrite-prompt" rows="4" placeholder='e.g., "Optimize my experience for a Senior Backend Node.js role with cloud deployment metrics"' class="w-full p-3.5 rounded-xl bg-[#05070B] border border-[#3B82F6] text-xs text-white outline-none"></textarea>
+              <button onclick="applyAiAutoUpdate()" class="w-full py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-xs cursor-pointer">
+                Generate & Apply AI Update
+              </button>
+            </div>
+          </div>
+
+          <!-- Export Buttons (DOCX gated for Paid Plans) -->
+          <div class="grid grid-cols-2 gap-3 pt-3 border-t border-white/15">
+            <button onclick="window.print()" class="py-2.5 rounded-xl bg-white hover:bg-slate-200 text-[#05070B] font-bold text-xs cursor-pointer">
+              Download PDF
+            </button>
+            <button id="btn-export-docx" onclick="exportResumeDocx()" class="py-2.5 rounded-xl bg-[#1E3A8A] hover:bg-[#2563EB] text-white border border-white/20 font-bold text-xs cursor-pointer">
+              Download DOCX
+            </button>
+          </div>
+        </div>
+
+        <!-- Live ATS Paper Sheet -->
+        <div class="lg:col-span-7">
+          <div id="resume-sheet" class="p-8 rounded-2xl bg-white text-[#05070B] shadow-2xl min-h-[620px] transition-all">
+            <div id="sheet-header-box" class="p-5 rounded-xl border-l-4 mb-6 transition-colors" style="background-color: #EFF6FF; border-color: #1E3A8A;">
+              <div class="flex flex-wrap justify-between items-baseline gap-2">
+                <h2 id="prev-name" class="text-2xl font-extrabold tracking-tight" style="color: #1E3A8A;">Keshav Mishra</h2>
+                <span id="prev-tpl-tag" class="text-[10px] uppercase tracking-wider font-bold px-2.5 py-0.5 rounded bg-[#05070B] text-white">Template #1 • Executive Navy</span>
+              </div>
+              <p id="prev-role" class="text-sm font-bold text-[#05070B] mt-1">Full-Stack Software Engineer</p>
+              <p id="prev-contact" class="text-xs text-slate-700 mt-1">keshav@1ststep.in • +91 98765 43210 • Kanpur, India</p>
+            </div>
+
+            <div class="space-y-4 text-xs leading-relaxed">
+              <div>
+                <h3 class="res-sec-heading font-extrabold uppercase tracking-wider border-b-2 pb-1 mb-2" style="color: #1E3A8A; border-color: #1E3A8A;">Professional Summary</h3>
+                <p id="prev-summary" class="text-slate-800"></p>
+              </div>
+              <div>
+                <h3 class="res-sec-heading font-extrabold uppercase tracking-wider border-b-2 pb-1 mb-2" style="color: #1E3A8A; border-color: #1E3A8A;">Experience</h3>
+                <p id="prev-exp" class="whitespace-pre-line text-slate-800"></p>
+              </div>
+              <div>
+                <h3 class="res-sec-heading font-extrabold uppercase tracking-wider border-b-2 pb-1 mb-2" style="color: #1E3A8A; border-color: #1E3A8A;">Technical Skills</h3>
+                <div id="prev-skills-pills" class="flex flex-wrap gap-1.5 pt-1"></div>
+              </div>
+              <div>
+                <h3 class="res-sec-heading font-extrabold uppercase tracking-wider border-b-2 pb-1 mb-2" style="color: #1E3A8A; border-color: #1E3A8A;">Education</h3>
+                <p id="prev-edu" class="text-slate-800"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB B: ATS COMPATIBILITY CHECKER & UPSKILLING -->
+      <div id="user-tab-ATS" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-5 p-6 rounded-2xl bg-[#0F172A] border border-white/15 space-y-4">
+          <h3 class="text-lg font-bold text-white">Paste Target Job Description</h3>
+          <textarea id="ats-jd-input" rows="8" class="w-full p-3.5 rounded-xl bg-[#05070B] border border-white/15 text-xs text-white">We are hiring a Full-Stack Software Engineer proficient in React, Next.js, TypeScript, Node.js, PostgreSQL, Docker, CI/CD, and System Design.</textarea>
+          <button onclick="runAtsScanner(true)" class="w-full py-3 rounded-xl bg-white hover:bg-slate-200 text-[#05070B] font-bold text-sm cursor-pointer">
+            Run Deep ATS Scan
+          </button>
+        </div>
+        <div class="lg:col-span-7 p-6 rounded-2xl bg-[#0F172A] border border-white/15 space-y-6">
+          <div class="flex items-center justify-between border-b border-white/15 pb-4">
+            <div>
+              <span class="text-xs text-slate-300">ATS Compatibility Score</span>
+              <h3 id="ats-score-display" class="text-4xl font-extrabold text-[#60A5FA]">86%</h3>
+            </div>
+            <span class="px-3 py-1 rounded-full bg-white text-[#0F172A] text-xs font-bold">Recruiter Ready</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="p-4 rounded-xl bg-[#05070B] border border-blue-500/30">
+              <h4 class="text-xs font-bold text-[#60A5FA] mb-2">Matched Keywords</h4>
+              <div id="ats-matched-list" class="flex flex-wrap gap-1.5"></div>
+            </div>
+            <div class="p-4 rounded-xl bg-[#05070B] border border-white/20">
+              <h4 class="text-xs font-bold text-white mb-2">Missing Keywords</h4>
+              <div id="ats-missing-list" class="flex flex-wrap gap-1.5"></div>
+            </div>
+          </div>
+          <div id="upskilling-box" class="space-y-2">
+            <h4 class="text-sm font-bold text-white">Recommended Upskilling & Certifications</h4>
+            <div id="upskilling-content"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB C: 30+ ATS TEMPLATES -->
+      <div id="user-tab-TEMPLATES" class="hidden">
+        <div id="templates-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4"></div>
+      </div>
+
+      <!-- TAB D: SUBSCRIPTION TIERS -->
+      <div id="user-tab-PLANS" class="hidden grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="p-6 rounded-2xl bg-[#0F172A] border border-white/15 space-y-4">
+          <h3 class="text-lg font-bold text-white">Basic Starter</h3>
+          <p class="text-3xl font-extrabold text-[#60A5FA]">₹199<span class="text-xs text-slate-400">/mo</span></p>
+          <p class="text-xs text-slate-300">Unlocks Templates #1–#10, 5 ATS Scans/mo, and DOCX export.</p>
+          <button onclick="upgradeUserPlan('BASIC_199')" class="w-full py-2.5 rounded-xl bg-white text-[#05070B] font-bold text-xs cursor-pointer">Activate ₹199 Plan</button>
+        </div>
+        <div class="p-6 rounded-2xl bg-[#1E3A8A] border-2 border-white space-y-4">
+          <h3 class="text-lg font-bold text-white">Professional</h3>
+          <p class="text-3xl font-extrabold text-white">₹399<span class="text-xs text-blue-200">/mo</span></p>
+          <p class="text-xs text-blue-100">Unlocks Templates #1–#20, 25 ATS Scans, Course Upskilling & 15 AI Auto-Updates.</p>
+          <button onclick="upgradeUserPlan('PRO_399')" class="w-full py-2.5 rounded-xl bg-[#05070B] text-white font-bold text-xs cursor-pointer">Activate ₹399 Plan</button>
+        </div>
+        <div class="p-6 rounded-2xl bg-[#0F172A] border border-white/15 space-y-4">
+          <h3 class="text-lg font-bold text-white">Enterprise Unlimited</h3>
+          <p class="text-3xl font-extrabold text-[#60A5FA]">₹599<span class="text-xs text-slate-400">/mo</span></p>
+          <p class="text-xs text-slate-300">Unlocks all 30+ templates, Unlimited ATS Scans, and Unlimited AI Auto-Updates.</p>
+          <button onclick="upgradeUserPlan('ENTERPRISE_599')" class="w-full py-2.5 rounded-xl bg-white text-[#05070B] font-bold text-xs cursor-pointer">Activate ₹599 Plan</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- EMPLOYEE SUPPORT PORTAL (READ-ONLY CANDIDATE REVIEW — CANNOT EDIT ABOUT US OR ADMIN SETTINGS) -->
+    <div id="portal-EMPLOYEE" class="hidden space-y-6">
+      <div class="p-6 rounded-2xl bg-[#0F172A] border border-white/15 flex flex-col sm:flex-row justify-between gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-white">Employee Support & Database Review Portal</h2>
+          <p class="text-xs text-slate-300">Read-only access to candidate records and ATS diagnostics (System & About Us settings locked to Admin)</p>
+        </div>
+        <input id="emp-search" oninput="renderEmployeeTable()" placeholder="Search candidate name or email..." class="px-4 py-2 rounded-xl bg-[#05070B] border border-white/15 text-xs text-white w-full sm:w-72" />
+      </div>
+      <div class="p-6 rounded-2xl bg-[#0F172A] border border-white/15 overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead>
+            <tr class="border-b border-white/15 text-slate-300">
+              <th class="pb-3">ID</th><th class="pb-3">Candidate</th><th class="pb-3">Email</th><th class="pb-3">Active Plan</th><th class="pb-3">ATS Score</th>
+            </tr>
+          </thead>
+          <tbody id="emp-table-body" class="divide-y divide-white/10 text-white"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ADMIN / OWNER CONTROL CENTER (FULL ROOT CONTROL) -->
+    <div id="portal-ADMIN" class="hidden space-y-6">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 class="text-2xl font-bold text-white">Admin & Owner Root Control Center</h2>
+          <p class="text-xs text-slate-300">Full unrestricted access: Manage users, override subscription plans, and edit/lock the About Us section</p>
+        </div>
+        <button onclick="jumpToAdminAboutEditor()" class="px-5 py-2.5 rounded-xl bg-white hover:bg-slate-200 text-[#05070B] font-extrabold text-xs inline-flex items-center gap-2 cursor-pointer shadow-lg">
+          <i data-lucide="edit-3" class="w-4 h-4"></i> Edit & Save About Us Section
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+        <div class="p-5 rounded-2xl bg-[#0F172A] border border-white/15"><p class="text-xs text-slate-300">Monthly Revenue</p><p class="text-2xl font-extrabold text-[#60A5FA] mt-1">₹2,14,800</p></div>
+        <div class="p-5 rounded-2xl bg-[#0F172A] border border-white/15"><p class="text-xs text-slate-300">Active Job Seekers</p><p class="text-2xl font-extrabold text-white mt-1">1,640</p></div>
+        <div class="p-5 rounded-2xl bg-[#0F172A] border border-white/15"><p class="text-xs text-slate-300">Resumes Optimized</p><p class="text-2xl font-extrabold text-white mt-1">4,920</p></div>
+        <div class="p-5 rounded-2xl bg-[#0F172A] border border-white/15"><p class="text-xs text-slate-300">Staff Accounts</p><p class="text-2xl font-extrabold text-[#60A5FA] mt-1">14 Active</p></div>
+      </div>
+
+      <div class="p-6 rounded-2xl bg-[#0F172A] border border-white/15 overflow-x-auto">
+        <h3 class="text-sm font-bold text-white mb-4">Master Database Accounts (Users & Employees)</h3>
+        <table class="w-full text-left text-xs">
+          <thead>
+            <tr class="border-b border-white/15 text-slate-300">
+              <th class="pb-3">ID</th><th class="pb-3">Name</th><th class="pb-3">Role</th><th class="pb-3">Plan</th><th class="pb-3">Status</th><th class="pb-3">Root Control</th>
+            </tr>
+          </thead>
+          <tbody id="admin-table-body" class="divide-y divide-white/10 text-white"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- FLOATING AI CAREER & PLATFORM CHATBOT -->
+  <div class="fixed bottom-6 right-6 z-50">
+    <div id="chatbot-window" class="hidden w-80 sm:w-96 rounded-2xl bg-[#0F172A] border border-white/25 shadow-2xl overflow-hidden flex flex-col mb-3">
+      <div class="p-4 bg-[#1E3A8A] text-white flex items-center justify-between font-bold text-sm border-b border-white/15">
+        <span>1st step AI Career Assistant</span>
+        <button onclick="toggleChatbot()" class="cursor-pointer"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+      <div id="chat-messages" class="p-4 h-64 overflow-y-auto space-y-2.5 text-xs">
+        <div class="p-3 rounded-xl bg-[#05070B] border border-white/15 text-slate-200">
+          Hi! I'm your <strong>1st step</strong> AI Career Guide. Ask me how to boost your ATS score, rewrite bullet points, or compare subscription tiers!
+        </div>
+      </div>
+      <form onsubmit="sendChatMessage(event)" class="p-3 border-t border-white/15 flex gap-2 bg-[#05070B]">
+        <input id="chat-input" placeholder="Ask career or ATS questions..." class="flex-1 px-3 py-2 rounded-xl bg-[#0F172A] border border-white/15 text-xs text-white outline-none" />
+        <button type="submit" class="px-3 py-2 rounded-xl bg-white text-[#05070B] font-bold text-xs cursor-pointer">Send</button>
+      </form>
+    </div>
+    <button onclick="toggleChatbot()" class="ml-auto flex items-center justify-center w-14 h-14 rounded-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white border-2 border-white shadow-xl transition-transform hover:scale-105 cursor-pointer">
+      <i data-lucide="message-square" class="w-6 h-6"></i>
+    </button>
+  </div>
+
+  <script>
+    // =========================================================
+    // 1. PERSISTENT ABOUT US DATA (ADMIN-ONLY EDIT & SAVE)
+    // =========================================================
+    const ABOUT_STORAGE_KEY = '1ststep_about_locked_v1';
+
+    const DEFAULT_ABOUT_DATA = {
+      mission: "1st step bridges the gap between talented candidates and automated hiring software. Over 75% of resumes are filtered out before reaching a human recruiter due to formatting errors or missing domain keywords. Our platform combines intelligent PDF/DOCX parsing, real-time ATS compatibility diagnostics, natural-language AI resume tailoring, and personalized upskilling paths to ensure every candidate takes their strongest first step into industry.",
+      mentor: {
+        name: "Dr. Pardeep Kumar Sir",
+        role: "Project Guide / Mentor",
+        initials: "PK",
+        bio: "Guiding the architectural vision, research methodology, and technical execution of 1st step, mentoring the development team from initial concept to production deployment.",
+        photo: ""
+      },
+      team: [
+        { id: 'keshav', name: 'Keshav Mishra', role: 'Developer / Creator', initials: 'KM', bio: 'Full-stack system architect engineering the AI ATS scoring pipeline, RBAC authentication, and core platform infrastructure.', photo: '' },
+        { id: 'himanshu', name: 'Himanshu Patel', role: 'Developer / Creator', initials: 'HP', bio: 'UI/UX designer & frontend architect crafting the Navy, White & Black interface, responsive layouts, and interactive resume previews.', photo: '' },
+        { id: 'parv', name: 'Parv Sangal', role: 'Developer / Creator', initials: 'PS', bio: 'Document parsing engineer building multi-format PDF/DOCX extraction and recruiter-compliant template systems.', photo: '' },
+        { id: 'bharat', name: 'Bharat Sangal', role: 'Developer / Creator', initials: 'BS', bio: 'Database & platform engineer managing subscription tier logic, employee support tools, and admin analytics.', photo: '' }
+      ]
+    };
+
+    function loadAboutData() {
+      try {
+        const saved = localStorage.getItem(ABOUT_STORAGE_KEY);
+        return saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_ABOUT_DATA));
+      } catch {
+        return JSON.parse(JSON.stringify(DEFAULT_ABOUT_DATA));
+      }
+    }
+
+    let aboutState = loadAboutData();
+    let isAboutEditing = false;
+
+    function compressImageToDataUrl(file, callback) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const maxDim = 280;
+          let w = img.width, h = img.height;
+          if (w > h && w > maxDim) { h *= maxDim / w; w = maxDim; }
+          else if (h > maxDim) { w *= maxDim / h; h = maxDim; }
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          callback(canvas.toDataURL('image/jpeg', 0.85));
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function renderAboutSection() {
+      const isAdmin = currentUser && currentUser.role === 'ADMIN';
+      const canEditNow = isAdmin && isAboutEditing;
+
+      document.getElementById('about-admin-bar').classList.toggle('hidden', !isAdmin);
+      document.getElementById('btn-toggle-about-edit').innerText = isAboutEditing ? 'Cancel Edit' : 'Enable Editing';
+      document.getElementById('btn-save-about').classList.toggle('hidden', !canEditNow);
+
+      // Mission text vs textarea
+      const missionP = document.getElementById('about-mission-text');
+      const missionInput = document.getElementById('about-mission-input');
+      missionP.innerText = aboutState.mission;
+      missionP.classList.toggle('hidden', canEditNow);
+      missionInput.value = aboutState.mission;
+      missionInput.classList.toggle('hidden', !canEditNow);
+
+      // Mentor Card (Upload button rendered ONLY when logged in as Admin and editing)
+      const m = aboutState.mentor;
+      document.getElementById('mentor-card-container').innerHTML = `
+        <div class="p-8 rounded-3xl bg-gradient-to-br from-[#1E3A8A] to-[#0F172A] border border-white/30 shadow-2xl flex flex-col sm:flex-row items-center gap-8">
+          <div class="relative shrink-0">
+            <div class="w-32 h-32 rounded-2xl overflow-hidden bg-[#05070B] border-2 border-white flex items-center justify-center">
+              ${m.photo
+                ? `<img src="${m.photo}" alt="${m.name}" class="w-full h-full object-cover" />`
+                : `<span class="text-3xl font-extrabold text-white">${m.initials}</span>`
+              }
+            </div>
+            ${canEditNow ? `
+              <label title="Upload Mentor Photo (Admin Only)" class="absolute -bottom-2 -right-2 p-2 rounded-full bg-white text-[#05070B] cursor-pointer hover:bg-slate-200 transition shadow-lg">
+                <i data-lucide="camera" class="w-4 h-4"></i>
+                <input type="file" accept="image/*" class="hidden" onchange="handleAdminPhotoUpload('mentor', null, this)" />
+              </label>
+            ` : ''}
+          </div>
+          <div class="text-center sm:text-left space-y-2 flex-1">
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white text-[#0F172A] text-xs font-bold">
+              <i data-lucide="award" class="w-3.5 h-3.5"></i> ${m.role}
+            </div>
+            ${canEditNow
+              ? `<input id="edit-mentor-name" value="${m.name}" class="block w-full px-3 py-1.5 rounded-lg bg-[#05070B] border border-white text-lg font-bold text-white" />
+                 <textarea id="edit-mentor-bio" rows="2" class="block w-full px-3 py-1.5 rounded-lg bg-[#05070B] border border-white text-xs text-white">${m.bio}</textarea>`
+              : `<h3 class="text-2xl font-bold text-white">${m.name}</h3>
+                 <p class="text-blue-100 text-sm leading-relaxed">${m.bio}</p>`
+            }
+          </div>
+        </div>
+      `;
+
+      // Team Grid (Upload buttons & edit fields rendered ONLY when logged in as Admin and editing)
+      const teamGrid = document.getElementById('team-grid');
+      teamGrid.innerHTML = aboutState.team.map((member, idx) => `
+        <div class="p-6 rounded-2xl bg-[#0F172A] border border-white/15 hover:border-white transition-all flex flex-col items-center text-center group">
+          <div class="relative mb-4">
+            <div class="w-24 h-24 rounded-full overflow-hidden bg-[#05070B] border-2 border-white/40 group-hover:border-white transition flex items-center justify-center">
+              ${member.photo
+                ? `<img src="${member.photo}" alt="${member.name}" class="w-full h-full object-cover" />`
+                : `<span class="text-2xl font-bold text-white">${member.initials}</span>`
+              }
+            </div>
+            ${canEditNow ? `
+              <label title="Upload ${member.name} Photo (Admin Only)" class="absolute bottom-0 right-0 p-1.5 rounded-full bg-white text-[#05070B] cursor-pointer hover:bg-slate-200 transition shadow">
+                <i data-lucide="camera" class="w-3.5 h-3.5"></i>
+                <input type="file" accept="image/*" class="hidden" onchange="handleAdminPhotoUpload('team', ${idx}, this)" />
+              </label>
+            ` : ''}
+          </div>
+          ${canEditNow
+            ? `<input id="edit-team-name-${idx}" value="${member.name}" class="w-full px-2.5 py-1 rounded bg-[#05070B] border border-white text-sm font-bold text-white text-center mb-1" />
+               <input id="edit-team-role-${idx}" value="${member.role}" class="w-full px-2.5 py-1 rounded bg-[#05070B] border border-white/40 text-xs text-[#60A5FA] text-center mb-2" />
+               <textarea id="edit-team-bio-${idx}" rows="3" class="w-full px-2.5 py-1 rounded bg-[#05070B] border border-white/40 text-xs text-slate-200">${member.bio}</textarea>`
+            : `<h4 class="text-lg font-bold text-white">${member.name}</h4>
+               <span class="text-xs font-semibold text-[#60A5FA] mt-0.5 mb-3">${member.role}</span>
+               <p class="text-xs text-slate-300 leading-relaxed">${member.bio}</p>`
+          }
+        </div>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    function toggleAboutEditMode() {
+      if (!currentUser || currentUser.role !== 'ADMIN') return;
+      if (isAboutEditing) {
+        // Cancel unsaved edits
+        aboutState = loadAboutData();
+        isAboutEditing = false;
+      } else {
+        isAboutEditing = true;
+      }
+      renderAboutSection();
+    }
+
+    function handleAdminPhotoUpload(target, index, input) {
+      if (!currentUser || currentUser.role !== 'ADMIN' || !isAboutEditing) return;
+      if (!input.files || !input.files[0]) return;
+      compressImageToDataUrl(input.files[0], (dataUrl) => {
+        if (target === 'mentor') {
+          aboutState.mentor.photo = dataUrl;
+        } else if (target === 'team') {
+          aboutState.team[index].photo = dataUrl;
+        }
+        renderAboutSection();
+      });
+    }
+
+    function saveAboutChangesPermanently() {
+      if (!currentUser || currentUser.role !== 'ADMIN') return;
+      aboutState.mission = document.getElementById('about-mission-input').value.trim() || aboutState.mission;
+      aboutState.mentor.name = document.getElementById('edit-mentor-name').value.trim() || aboutState.mentor.name;
+      aboutState.mentor.bio = document.getElementById('edit-mentor-bio').value.trim() || aboutState.mentor.bio;
+
+      aboutState.team.forEach((member, idx) => {
+        member.name = document.getElementById(`edit-team-name-${idx}`).value.trim() || member.name;
+        member.role = document.getElementById(`edit-team-role-${idx}`).value.trim() || member.role;
+        member.bio = document.getElementById(`edit-team-bio-${idx}`).value.trim() || member.bio;
+      });
+
+      localStorage.setItem(ABOUT_STORAGE_KEY, JSON.stringify(aboutState));
+      isAboutEditing = false;
+      renderAboutSection();
+
+      const toast = document.getElementById('about-save-toast');
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 5000);
+    }
+
+    function jumpToAdminAboutEditor() {
+      if (!currentUser || currentUser.role !== 'ADMIN') return;
+      isAboutEditing = true;
+      switchView('LANDING');
+      renderAboutSection();
+      setTimeout(() => {
+        document.getElementById('about-us').scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+
+    // =========================================================
+    // 2. PLAN LIMITS & USER STATE
+    // =========================================================
+    const PLAN_CONFIG = {
+      FREE: { label: 'FREE TRIAL (₹0)', maxTemplates: 3, maxAtsScans: 1, maxAiUpdates: 0, allowDocx: false, allowUpskill: false },
+      BASIC_199: { label: 'BASIC (₹199/mo)', maxTemplates: 10, maxAtsScans: 5, maxAiUpdates: 0, allowDocx: true, allowUpskill: false },
+      PRO_399: { label: 'PROFESSIONAL (₹399/mo)', maxTemplates: 20, maxAtsScans: 25, maxAiUpdates: 15, allowDocx: true, allowUpskill: true },
+      ENTERPRISE_599: { label: 'ENTERPRISE (₹599/mo)', maxTemplates: 30, maxAtsScans: 9999, maxAiUpdates: 9999, allowDocx: true, allowUpskill: true }
+    };
+
+    let currentUser = null;
+    let selectedRole = 'USER';
+    let authMode = 'LOGIN';
+    let generatedOtp = '';
+    let activeResumePrimary = '#1E3A8A';
+    let activeResumeTint = '#EFF6FF';
+
+    const TEMPLATE_STYLES = [
+      { primary: '#1E3A8A', tint: '#EFF6FF', font: 'Inter, sans-serif' },
+      { primary: '#05070B', tint: '#F1F5F9', font: 'Inter, sans-serif' },
+      { primary: '#2563EB', tint: '#DBEAFE', font: 'Merriweather, serif' },
+      { primary: '#0F172A', tint: '#E2E8F0', font: 'Inter, sans-serif' },
+      { primary: '#1D4ED8', tint: '#EFF6FF', font: 'Merriweather, serif' }
+    ];
+
+    const TEMPLATE_NAMES = [
+      "Executive Navy", "Obsidian Minimalist", "Royal Cobalt Tech", "Midnight Slate", "Corporate Blue",
+      "Stanford Navy", "Carbon Grid", "Metro Analyst", "Quantum Blue", "Horizon Lead",
+      "Precision Navy", "Catalyst Black", "Meridian Finance", "Atlas Engineering", "Summit Director",
+      "Pulse Startup", "Vertex Data Science", "Sterling Legal", "Nova Consulting", "Titan Architect",
+      "Pinnacle VP", "Kinetix AI/ML", "Sovereign Board", "Obsidian Tech Lead", "Aurora Design Ops",
+      "Nexus Cloud", "Monarch Strategy", "Veloce Full-Stack", "Imperial Fellow", "Zenith Enterprise"
+    ];
+
+    const TEMPLATES = TEMPLATE_NAMES.map((name, i) => {
+      const id = i + 1;
+      const tierLabel = id <= 3 ? 'Free & Above' : id <= 10 ? '₹199 Basic+' : id <= 20 ? '₹399 Pro+' : '₹599 Enterprise';
+      const style = TEMPLATE_STYLES[i % TEMPLATE_STYLES.length];
+      return { id, name, tierLabel, ...style, ats: `${96 + (i % 4)}%` };
+    });
+
+    let DB_ACCOUNTS = [
+      { id: 'U-101', name: 'Aarav Sharma', email: 'aarav@gmail.com', role: 'USER', tier: 'PRO_399', ats: 88, active: true },
+      { id: 'U-102', name: 'Priya Verma', email: 'priya.v@outlook.com', role: 'USER', tier: 'ENTERPRISE_599', ats: 94, active: true },
+      { id: 'U-103', name: 'Rohan Gupta', email: 'rohan@yahoo.com', role: 'USER', tier: 'BASIC_199', ats: 74, active: true },
+      { id: 'E-201', name: 'Ananya Support', email: 'ananya@1ststep.in', role: 'EMPLOYEE', tier: 'STAFF', ats: 0, active: true }
+    ];
+
+    // =========================================================
+    // 3. VIEW ROUTER & AUTHENTICATION
+    // =========================================================
+    function switchView(view) {
+      ['LANDING', 'AUTH', 'PORTAL'].forEach(v => {
+        document.getElementById(`view-${v.toLowerCase()}`).classList.add('hidden');
+      });
+      document.getElementById(`view-${view.toLowerCase()}`).classList.remove('hidden');
+      if (view === 'LANDING') renderAboutSection();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function handleHeaderAuthClick() {
+      if (currentUser) {
+        currentUser = null;
+        isAboutEditing = false;
+        document.getElementById('nav-auth-btn').innerText = 'Login / Portal';
+        document.getElementById('nav-workspace-btn').classList.add('hidden');
+        document.getElementById('nav-user-badge').classList.add('hidden');
+        renderAboutSection();
+        switchView('LANDING');
+      } else {
+        switchView('AUTH');
+      }
+    }
+
+    function selectAuthRole(role) {
+      selectedRole = role;
+      authMode = 'LOGIN';
+      ['USER', 'EMPLOYEE', 'ADMIN'].forEach(r => {
+        const btn = document.getElementById(`role-btn-${r}`);
+        btn.className = r === role
+          ? 'py-2 text-xs font-bold rounded-lg bg-[#2563EB] text-white transition cursor-pointer'
+          : 'py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition cursor-pointer';
+      });
+      document.getElementById('auth-alert').classList.add('hidden');
+      document.getElementById('admin-login-hint').classList.toggle('hidden', role !== 'ADMIN');
+      document.getElementById('field-fullname').classList.add('hidden');
+      document.getElementById('field-emp-code').classList.add('hidden');
+      document.getElementById('field-otp').classList.add('hidden');
+      document.getElementById('toggle-signup-btn').classList.toggle('hidden', role === 'ADMIN');
+      document.getElementById('forgot-otp-btn').classList.toggle('hidden', role !== 'EMPLOYEE');
+      document.getElementById('input-email').placeholder =
+        role === 'ADMIN' ? 'admin@1ststep.in' :
+        role === 'EMPLOYEE' ? 'name@1ststep.in (Company Email)' : 'Email Address';
+      document.getElementById('auth-submit-btn').innerText = `Enter ${role === 'USER' ? 'Job Seeker' : role === 'EMPLOYEE' ? 'Employee' : 'Admin'} Portal`;
+    }
+
+    function toggleAuthMode() {
+      authMode = authMode === 'LOGIN' ? 'SIGNUP' : 'LOGIN';
+      document.getElementById('auth-heading').innerText = authMode === 'SIGNUP' ? 'Create Account' : 'Portal Sign In';
+      document.getElementById('field-fullname').classList.toggle('hidden', authMode !== 'SIGNUP');
+      document.getElementById('field-emp-code').classList.toggle('hidden', !(authMode === 'SIGNUP' && selectedRole === 'EMPLOYEE'));
+      document.getElementById('toggle-signup-btn').innerText = authMode === 'SIGNUP' ? 'Already registered? Sign in' : 'New here? Create Account';
+    }
+
+    function triggerEmployeeOtp() {
+      const email = document.getElementById('input-email').value.trim();
+      const alertBox = document.getElementById('auth-alert');
+      if (!email.endsWith('@1ststep.in')) {
+        alertBox.innerText = 'Please enter your official @1ststep.in company email first.';
+        alertBox.classList.remove('hidden');
+        return;
+      }
+      authMode = 'OTP';
+      generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+      alertBox.innerText = `OTP dispatched to ${email} (Verification Code: ${generatedOtp})`;
+      alertBox.classList.remove('hidden');
+      document.getElementById('field-otp').classList.remove('hidden');
+      document.getElementById('input-password').placeholder = 'Enter New Password';
+      document.getElementById('auth-submit-btn').innerText = 'Verify OTP & Reset Password';
+    }
+
+    function handleAuthSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('input-email').value.trim().toLowerCase();
+      const password = document.getElementById('input-password').value;
+      const fullName = document.getElementById('input-fullname').value.trim();
+      const alertBox = document.getElementById('auth-alert');
+
+      // Strict Admin Credential Verification
+      if (selectedRole === 'ADMIN') {
+        if (email !== 'admin@1ststep.in' || password !== 'admin123') {
+          alertBox.innerText = 'Access Denied: Invalid Admin/Owner credentials.';
+          alertBox.classList.remove('hidden');
+          return;
+        }
+      }
+
+      if (selectedRole === 'EMPLOYEE' && !email.endsWith('@1ststep.in')) {
+        alertBox.innerText = 'Employee access requires an official @1ststep.in company email.';
+        alertBox.classList.remove('hidden');
+        return;
+      }
+
+      if (authMode === 'OTP') {
+        const enteredOtp = document.getElementById('input-otp').value.trim();
+        if (enteredOtp !== generatedOtp) {
+          alertBox.innerText = 'Invalid OTP code. Please check and try again.';
+          alertBox.classList.remove('hidden');
+          return;
+        }
+        authMode = 'LOGIN';
+        document.getElementById('field-otp').classList.add('hidden');
+      }
+
+      currentUser = {
+        name: fullName || (selectedRole === 'ADMIN' ? 'Owner / Admin' : selectedRole === 'EMPLOYEE' ? 'Support Specialist' : 'Candidate'),
+        email,
+        role: selectedRole,
+        tier: 'BASIC_199',
+        atsScansUsed: 0,
+        aiUpdatesUsed: 0
+      };
+
+      document.getElementById('nav-auth-btn').innerText = 'Sign Out';
+      document.getElementById('nav-workspace-btn').classList.remove('hidden');
+      document.getElementById('nav-user-badge').innerText = `${currentUser.role}: ${currentUser.name}`;
+      document.getElementById('nav-user-badge').classList.remove('hidden');
+
+      ['USER', 'EMPLOYEE', 'ADMIN'].forEach(r => {
+        document.getElementById(`portal-${r}`).classList.toggle('hidden', r !== currentUser.role);
+      });
+
+      if (currentUser.role === 'USER') {
+        document.getElementById('user-welcome-title').innerText = `Welcome, ${currentUser.name}`;
+        updateUserPlanUI();
+        syncResumePreview();
+        runAtsScanner(false);
+        renderTemplatesGrid();
+      } else if (currentUser.role === 'EMPLOYEE') {
+        renderEmployeeTable();
+      } else {
+        renderAdminTable();
+      }
+
+      renderAboutSection();
+      switchView('PORTAL');
+    }
+
+    // =========================================================
+    // 4. USER DASHBOARD: STRICT PLAN LIMITS & QUOTA ENFORCEMENT
+    // =========================================================
+    function updateUserPlanUI() {
+      if (!currentUser || currentUser.role !== 'USER') return;
+      const cfg = PLAN_CONFIG[currentUser.tier];
+      const scansLeft = cfg.maxAtsScans > 999 ? 'Unlimited' : Math.max(0, cfg.maxAtsScans - currentUser.atsScansUsed);
+      const aiLeft = cfg.maxAiUpdates > 999 ? 'Unlimited' : Math.max(0, cfg.maxAiUpdates - currentUser.aiUpdatesUsed);
+
+      document.getElementById('user-quota-bar').innerHTML = `
+        Plan: <span class="text-[#60A5FA] font-bold">${cfg.label}</span> •
+        Templates: <span class="text-white font-bold">${cfg.maxTemplates}/30</span> •
+        ATS Scans Left: <span class="text-white font-bold">${scansLeft}</span> •
+        AI Rewrites Left: <span class="text-white font-bold">${aiLeft}</span>
+      `;
+
+      // Gate AI Editor
+      const canUseAi = cfg.maxAiUpdates > 0 && currentUser.aiUpdatesUsed < cfg.maxAiUpdates;
+      document.getElementById('ai-locked-notice').classList.toggle('hidden', canUseAi);
+      document.getElementById('ai-unlocked-controls').classList.toggle('hidden', !canUseAi);
+
+      // Gate DOCX Export
+      const docxBtn = document.getElementById('btn-export-docx');
+      docxBtn.innerText = cfg.allowDocx ? 'Download DOCX' : 'DOCX Locked (Upgrade)';
+
+      // Gate Course Upskilling
+      const upskillBox = document.getElementById('upskilling-content');
+      upskillBox.innerHTML = cfg.allowUpskill
+        ? `<div class="p-3.5 rounded-xl bg-[#05070B] border border-white/15 flex justify-between items-center">
+             <div>
+               <p class="text-xs font-bold text-white">Docker & Kubernetes Microservices</p>
+               <p class="text-[11px] text-slate-400">Boosts cloud infrastructure keyword density</p>
+             </div>
+             <span class="text-xs font-bold text-[#60A5FA]">+7% Score</span>
+           </div>`
+        : `<div class="p-3.5 rounded-xl bg-[#05070B] border border-white/20 flex items-center justify-between">
+             <span class="text-xs text-slate-300">Course Upskilling & Certifications require <strong>Pro (₹399)</strong> or <strong>Enterprise (₹599)</strong>.</span>
+             <button onclick="switchUserTab('PLANS')" class="px-3 py-1 rounded bg-white text-[#05070B] font-bold text-xs cursor-pointer">Upgrade</button>
+           </div>`;
+    }
+
+    function switchUserTab(tab) {
+      ['BUILDER', 'ATS', 'TEMPLATES', 'PLANS'].forEach(t => {
+        document.getElementById(`user-tab-${t}`).classList.toggle('hidden', t !== tab);
+        if (t !== 'PLANS') {
+          document.getElementById(`utab-${t}`).className = t === tab
+            ? 'px-4 py-2 rounded-xl text-xs font-bold bg-white text-[#05070B] cursor-pointer'
+            : 'px-4 py-2 rounded-xl text-xs font-bold bg-[#05070B] text-white border border-white/15 cursor-pointer';
+        }
+      });
+    }
+
+    function setEditorMode(mode) {
+      document.getElementById('editor-manual-box').classList.toggle('hidden', mode !== 'MANUAL');
+      document.getElementById('editor-ai-box').classList.toggle('hidden', mode !== 'AI');
+      document.getElementById('emode-MANUAL').className = mode === 'MANUAL'
+        ? 'px-3 py-1.5 rounded-lg text-xs font-bold bg-[#2563EB] text-white cursor-pointer'
+        : 'px-3 py-1.5 rounded-lg text-xs font-bold bg-[#05070B] text-slate-300 cursor-pointer';
+      document.getElementById('emode-AI').className = mode === 'AI'
+        ? 'px-3 py-1.5 rounded-lg text-xs font-bold bg-[#2563EB] text-white cursor-pointer'
+        : 'px-3 py-1.5 rounded-lg text-xs font-bold bg-[#05070B] text-slate-300 cursor-pointer';
+      updateUserPlanUI();
+    }
+
+    function applyResumeColor(primaryHex, tintHex) {
+      activeResumePrimary = primaryHex;
+      activeResumeTint = tintHex;
+      const headerBox = document.getElementById('sheet-header-box');
+      headerBox.style.backgroundColor = tintHex;
+      headerBox.style.borderColor = primaryHex;
+      document.getElementById('prev-name').style.color = primaryHex;
+      document.querySelectorAll('.res-sec-heading').forEach(el => {
+        el.style.color = primaryHex;
+        el.style.borderColor = primaryHex;
+      });
+      syncResumePreview();
+    }
+
+    function syncResumePreview() {
+      document.getElementById('prev-name').innerText = document.getElementById('res-name').value;
+      document.getElementById('prev-role').innerText = document.getElementById('res-role').value;
+      document.getElementById('prev-contact').innerText = document.getElementById('res-contact').value;
+      document.getElementById('prev-summary').innerText = document.getElementById('res-summary').value;
+      document.getElementById('prev-exp').innerText = document.getElementById('res-exp').value;
+      document.getElementById('prev-edu').innerText = document.getElementById('res-edu').value;
+
+      const skills = document.getElementById('res-skills').value.split(',').map(s => s.trim()).filter(Boolean);
+      document.getElementById('prev-skills-pills').innerHTML = skills.map(s =>
+        `<span class="px-2.5 py-0.5 rounded-md text-[11px] font-semibold border" style="background-color:${activeResumeTint}; color:${activeResumePrimary}; border-color:${activeResumePrimary}40;">${s}</span>`
+      ).join('');
+    }
+
+    function applyAiAutoUpdate() {
+      const cfg = PLAN_CONFIG[currentUser.tier];
+      if (currentUser.aiUpdatesUsed >= cfg.maxAiUpdates) {
+        updateUserPlanUI();
+        return;
+      }
+      const prompt = document.getElementById('ai-rewrite-prompt').value.trim();
+      if (!prompt) return;
+      currentUser.aiUpdatesUsed += 1;
+      const expEl = document.getElementById('res-exp');
+      expEl.value += `\n• [AI Tailored]: Spearheaded ${prompt} — delivering measurable performance gains and full ATS keyword alignment.`;
+      document.getElementById('ai-rewrite-prompt').value = '';
+      syncResumePreview();
+      updateUserPlanUI();
+      setEditorMode('MANUAL');
+    }
+
+    async function parseUploadedResume(input) {
+      if (!input.files || !input.files[0]) return;
+      const file = input.files[0];
+      const text = await file.text();
+      const cleaned = text.replace(/[^\x20-\x7E]/g, ' ').replace(/\s+/g, ' ').trim();
+      if (cleaned.length > 20) {
+        document.getElementById('res-summary').value = cleaned.slice(0, 260);
+        syncResumePreview();
+      }
+      alert(`Parsed "${file.name}" into your live ATS editor!`);
+    }
+
+    function runAtsScanner(consumeQuota) {
+      if (consumeQuota && currentUser) {
+        const cfg = PLAN_CONFIG[currentUser.tier];
+        if (currentUser.atsScansUsed >= cfg.maxAtsScans) {
+          alert(`You have reached your ${cfg.label} limit of ${cfg.maxAtsScans} ATS scan(s). Please upgrade your plan to continue scanning.`);
+          switchUserTab('PLANS');
+          return;
+        }
+        currentUser.atsScansUsed += 1;
+        updateUserPlanUI();
+      }
+
+      const resumeText = (
+        document.getElementById('res-role').value + ' ' +
+        document.getElementById('res-summary').value + ' ' +
+        document.getElementById('res-exp').value + ' ' +
+        document.getElementById('res-skills').value
+      ).toLowerCase();
+
+      const jdTokens = Array.from(new Set(
+        document.getElementById('ats-jd-input').value.toLowerCase().split(/[\s,.-]+/).filter(w => w.length > 3)
+      )).slice(0, 12);
+
+      const matched = jdTokens.filter(t => resumeText.includes(t));
+      const missing = jdTokens.filter(t => !resumeText.includes(t));
+      const score = Math.min(98, Math.max(62, Math.round((matched.length / Math.max(1, jdTokens.length)) * 100)));
+
+      document.getElementById('ats-score-display').innerText = `${score}%`;
+      document.getElementById('ats-matched-list').innerHTML = (matched.length ? matched : ['react', 'typescript', 'node']).map(k => `<span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-200 text-[11px]">${k}</span>`).join('');
+      document.getElementById('ats-missing-list').innerHTML = (missing.length ? missing : ['docker', 'ci/cd']).map(k => `<span class="px-2 py-0.5 rounded bg-white/10 text-white text-[11px]">${k}</span>`).join('');
+    }
+
+    function renderTemplatesGrid() {
+      const cfg = PLAN_CONFIG[currentUser?.tier || 'BASIC_199'];
+      const grid = document.getElementById('templates-grid');
+      grid.innerHTML = TEMPLATES.map(t => {
+        const unlocked = t.id <= cfg.maxTemplates;
+        return `
+          <div class="p-4 rounded-2xl bg-[#0F172A] border border-white/15 hover:border-white flex flex-col justify-between">
+            <div>
+              <div class="h-2.5 w-full rounded-full mb-3 border border-white/20" style="background: linear-gradient(90deg, ${t.primary} 70%, #FFFFFF 100%);"></div>
+              <div class="flex justify-between text-[11px] mb-1.5">
+                <span class="text-slate-400">#${t.id}</span>
+                <span class="text-[#60A5FA] font-bold">ATS ${t.ats}</span>
+              </div>
+              <h4 class="text-sm font-bold text-white">${t.name}</h4>
+              <p class="text-[11px] text-slate-300 mb-4">${t.tierLabel}</p>
+            </div>
+            ${unlocked
+              ? `<button onclick="applyTemplate(${t.id})" class="w-full py-2 rounded-xl bg-white hover:bg-slate-200 text-[#05070B] text-xs font-bold transition cursor-pointer">Apply Template</button>`
+              : `<button onclick="switchUserTab('PLANS')" class="w-full py-2 rounded-xl bg-[#05070B] text-slate-400 border border-white/15 text-xs font-semibold cursor-pointer">Locked (${t.tierLabel})</button>`
+            }
+          </div>
+        `;
+      }).join('');
+    }
+
+    function applyTemplate(id) {
+      const cfg = PLAN_CONFIG[currentUser?.tier || 'BASIC_199'];
+      if (id > cfg.maxTemplates) {
+        switchUserTab('PLANS');
+        return;
+      }
+      const tpl = TEMPLATES.find(t => t.id === id);
+      if (!tpl) return;
+      document.getElementById('resume-sheet').style.fontFamily = tpl.font;
+      document.getElementById('prev-tpl-tag').innerText = `Template #${tpl.id} • ${tpl.name}`;
+      applyResumeColor(tpl.primary, tpl.tint);
+      switchUserTab('BUILDER');
+    }
+
+    function upgradeUserPlan(tierKey) {
+      if (!currentUser) return;
+      currentUser.tier = tierKey;
+      updateUserPlanUI();
+      renderTemplatesGrid();
+      switchUserTab('TEMPLATES');
+    }
+
+    function exportResumeDocx() {
+      const cfg = PLAN_CONFIG[currentUser?.tier || 'BASIC_199'];
+      if (!cfg.allowDocx) {
+        alert('DOCX export requires Basic (₹199/mo) or higher.');
+        switchUserTab('PLANS');
+        return;
+      }
+      const html = `<html><body style="font-family:Arial,sans-serif;">
+        <h1 style="color:${activeResumePrimary};">${document.getElementById('res-name').value}</h1>
+        <p><strong>${document.getElementById('res-role').value}</strong> | ${document.getElementById('res-contact').value}</p><hr/>
+        <h3 style="color:${activeResumePrimary};">SUMMARY</h3><p>${document.getElementById('res-summary').value}</p>
+        <h3 style="color:${activeResumePrimary};">EXPERIENCE</h3><p>${document.getElementById('res-exp').value.replace(/\n/g, '<br/>')}</p>
+        <h3 style="color:${activeResumePrimary};">SKILLS</h3><p>${document.getElementById('res-skills').value}</p>
+        <h3 style="color:${activeResumePrimary};">EDUCATION</h3><p>${document.getElementById('res-edu').value}</p>
+      </body></html>`;
+      const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = '1st_step_ATS_Resume.doc';
+      a.click();
+    }
+
+    // =========================================================
+    // 5. EMPLOYEE & ADMIN TABLES
+    // =========================================================
+    function renderEmployeeTable() {
+      const q = (document.getElementById('emp-search')?.value || '').toLowerCase();
+      const rows = DB_ACCOUNTS.filter(a => a.role === 'USER' && (a.name.toLowerCase().includes(q) || a.email.toLowerCase().includes(q)));
+      document.getElementById('emp-table-body').innerHTML = rows.map(u => `
+        <tr>
+          <td class="py-3 font-mono text-[#60A5FA]">${u.id}</td>
+          <td class="py-3 font-semibold">${u.name}</td>
+          <td class="py-3">${u.email}</td>
+          <td class="py-3">${u.tier}</td>
+          <td class="py-3 font-bold text-white">${u.ats}%</td>
+        </tr>
+      `).join('');
+    }
+
+    function renderAdminTable() {
+      document.getElementById('admin-table-body').innerHTML = DB_ACCOUNTS.map(u => `
+        <tr>
+          <td class="py-3 font-mono text-[#60A5FA]">${u.id}</td>
+          <td class="py-3 font-semibold">${u.name}</td>
+          <td class="py-3"><span class="px-2 py-0.5 rounded bg-white/10 text-[10px]">${u.role}</span></td>
+          <td class="py-3">${u.tier}</td>
+          <td class="py-3 ${u.active ? 'text-[#60A5FA]' : 'text-slate-400'}">${u.active ? 'Active' : 'Suspended'}</td>
+          <td class="py-3">
+            <button onclick="toggleAccountStatus('${u.id}')" class="px-3 py-1 rounded-lg bg-white text-[#05070B] hover:bg-slate-200 font-bold text-xs cursor-pointer">
+              ${u.active ? 'Suspend' : 'Restore'}
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function toggleAccountStatus(id) {
+      DB_ACCOUNTS = DB_ACCOUNTS.map(a => a.id === id ? { ...a, active: !a.active } : a);
+      renderAdminTable();
+    }
+
+    // =========================================================
+    // 6. FLOATING AI CHATBOT & INITIALIZATION
+    // =========================================================
+    function toggleChatbot() {
+      document.getElementById('chatbot-window').classList.toggle('hidden');
+    }
+
+    function sendChatMessage(e) {
+      e.preventDefault();
+      const input = document.getElementById('chat-input');
+      const msg = input.value.trim();
+      if (!msg) return;
+      const box = document.getElementById('chat-messages');
+      box.innerHTML += `<div class="p-3 rounded-xl bg-[#2563EB] text-white font-medium ml-auto max-w-[85%]">${msg}</div>`;
+      input.value = '';
+
+      let reply = 'Use strong action verbs (Architected, Engineered, Automated) and pair them with quantified metrics to clear 85%+ on ATS filters.';
+      if (msg.toLowerCase().includes('plan') || msg.toLowerCase().includes('price')) {
+        reply = 'We offer ₹199/mo (Basic - 10 templates, 5 ATS scans), ₹399/mo (Pro - 20 templates, 15 AI updates & upskilling), and ₹599/mo (Enterprise - all 30+ templates & unlimited AI).';
+      }
+      setTimeout(() => {
+        box.innerHTML += `<div class="p-3 rounded-xl bg-[#05070B] border border-white/15 text-slate-200 max-w-[85%]">${reply}</div>`;
+        box.scrollTop = box.scrollHeight;
+      }, 300);
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Initial Render
+    renderAboutSection();
+    lucide.createIcons();
+  </script>
+</body>
+</html>
